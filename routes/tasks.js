@@ -16,6 +16,7 @@ var taskSchema = new mongoose.Schema({
     taskName: String, 
     time: Date,
     status:String,
+    priority:String
   });
 var Task = mongoose.model('Task', taskSchema);
 
@@ -41,12 +42,17 @@ var Task = mongoose.model('Task', taskSchema);
     if (req.body.status === undefined) {
       throw new Error('status must be supplied')
     }
+    if (req.body.priority === undefined) {
+      throw new Error('priority must be supplied')
+    }
     
     var newTasks = new Task({
       userId: req.params.userId,
       taskName: req.body.taskName,
       time: req.body.time,
       status: req.body.status,
+      priority: req.body.priority
+      
     });
 
     newTasks.save(function (error, result) {
@@ -54,6 +60,50 @@ var Task = mongoose.model('Task', taskSchema);
   
       res.status(201).send(result)
     })
+  })
+
+
+
+  router.put('/users/:userId/tasks/:taskId', async function (req, res, next) {
+    console.log('PUT request: /tasks/' + req.params.userId + '/tasks' + req.params.taskId);
+    if (req.params.userId === undefined) {
+      throw new Error('useId must be supplied')
+    }
+    if (req.body.taskName === undefined) {
+      throw new Error('taskName must be supplied')
+    }
+    if (req.body.time === undefined) {
+      throw new Error('time must be supplied')
+    }
+    if (req.body.status === undefined) {
+      throw new Error('status must be supplied')
+    }
+    if (req.body.priority === undefined) {
+      throw new Error('priority must be supplied')
+    }
+    
+    var data = {
+      userId: req.params.userId,
+      taskName: req.body.taskName,
+      time: req.body.time,
+      status: req.body.status,
+      priority: req.body.priority
+      
+    };
+    const taskId = req.params.taskId
+    const updatedTask = await Task.findByIdAndUpdate(taskId, data, {
+      new: true
+    })
+    res.status(201).json({
+      status: 'success',
+      updatedTask
+    })
+
+    // newTasks.save(function (error, result) {
+    //   if (error) return next(new Error(JSON.stringify(error.errors)))
+  
+    //   res.status(201).send(result)
+    // })
   })
 
    // delete a task for a user

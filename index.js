@@ -21,7 +21,7 @@ db.once('open', function() {
 });
 
 //config
-var port = process.env.PORT || 5000;
+var port = process.env.PORT || 5001;
 var app = express();
 app.use(cors())
 app.use(express.json()) 
